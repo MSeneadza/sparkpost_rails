@@ -379,16 +379,11 @@ module SparkPostRails
     def post_to_api
       url = "https://api.sparkpost.com/api/v1/transmissions"
 
-      uri = URI.parse(url)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-
-      request = Net::HTTP::Post.new(uri.path, @headers)
-      request.body = JSON.generate(@data)
-      http.request(request)
+      RestClient.post(url, JSON.generate(@data), @headers)
     end
 
     def process_result result
+      # perhaos I shouldn't call this anymore now that I've switched to RestClient and it handles errors differently
       result_data = JSON.parse(result.body)
 
       if result_data["errors"]
